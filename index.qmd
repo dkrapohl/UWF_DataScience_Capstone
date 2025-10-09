@@ -1,6 +1,6 @@
 ---
-title: "Time Series Augmented Random Forest Models for Stock Market Index Direction Prediction"
-subtitle: "UWF Capstone"
+title: "Predicting Stock Market Index Direction Using ARIMA-Augmented Quantum Random Forest Models"
+subtitle: "Integrating Quantum Computing, Machine Learning and Classical Time Series Modeling"
 author: "Don Krapohl (Advisor: Dr. Shusen Pu)"
 date: today
 format:
@@ -41,7 +41,7 @@ The Jupyter Notebook is available from [**https://github.com/dkrapohl/UWF_DataSc
 
 ## Research Problem {#sec-problem}
 
-The objective is to use my course work, current literature, and intent on future research to classify the market movement as either upward or downward. Because Random Forest has no memory I will use both machine learning and time series modeling to identify optimal lags and moving averages and introduce these variables during feature engineering.
+The objective is to use my course work, current literature, and intent on future research to classify the market movement as either upward or downward. Because Random Forest has no memory I will use both machine learning, time series modeling, and quantum circuits to identify optimal lags and moving averages and introduce these variables during feature engineering.
 
 ## Research Objectives {#sec-objectives}
 
@@ -63,6 +63,7 @@ This project will consist of a section covering the background, theory, recent r
 - Generalized AutoRegressive Conditional Heteroskedasticity (GARCH) models of volatility
 - Vector Autoregressive (VAR) models and Multivariate Time Series analysis
 - Hybrid models
+- Quantum Random Forest
 
 I will being with a literature review, outline my methodology and dataset, state dataset statistical information, perform feature engineering, train and measure my models, review the findings, and discuss their implications.
 
@@ -79,7 +80,13 @@ There were some foundational research projects in the 1920s that set the stage f
 ## GARCH Models of Volatility
 
 
+## Vector Autoregressive (VAR) and Multivariate Time Series Analysis
 
+
+## Quantum Random Forest
+
+-- ref [@Srikumar2024QuantumRandomForest]
+-- git at https://github.com/maiyuren/Quantum-Random-Forest
 
 
 

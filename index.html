@@ -9,7 +9,7 @@
 <meta name="author" content="Don Krapohl (Advisor: Dr. Shusen Pu)">
 <meta name="dcterms.date" content="2025-10-08">
 
-<title>Time Series Augmented Random Forest Models for Stock Market Index Direction Prediction</title>
+<title>Predicting Stock Market Index Direction Using ARIMA-Augmented Quantum Random Forest Models</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -3090,6 +3090,8 @@ vertical-align: -.125em;
   <li><a href="#sec-lit-overview" id="toc-sec-lit-overview" class="nav-link" data-scroll-target="#sec-lit-overview"><span class="header-section-number">2.1</span> Overview of Stock Market Prediction</a></li>
   <li><a href="#sarima-and-arima-time-series-model-development" id="toc-sarima-and-arima-time-series-model-development" class="nav-link" data-scroll-target="#sarima-and-arima-time-series-model-development"><span class="header-section-number">2.2</span> SARIMA and ARIMA Time Series Model Development</a></li>
   <li><a href="#garch-models-of-volatility" id="toc-garch-models-of-volatility" class="nav-link" data-scroll-target="#garch-models-of-volatility"><span class="header-section-number">2.3</span> GARCH Models of Volatility</a></li>
+  <li><a href="#vector-autoregressive-var-and-multivariate-time-series-analysis" id="toc-vector-autoregressive-var-and-multivariate-time-series-analysis" class="nav-link" data-scroll-target="#vector-autoregressive-var-and-multivariate-time-series-analysis"><span class="header-section-number">2.4</span> Vector Autoregressive (VAR) and Multivariate Time Series Analysis</a></li>
+  <li><a href="#quantum-random-forest" id="toc-quantum-random-forest" class="nav-link" data-scroll-target="#quantum-random-forest"><span class="header-section-number">2.5</span> Quantum Random Forest</a></li>
   </ul></li>
   <li><a href="#sec-references" id="toc-sec-references" class="nav-link" data-scroll-target="#sec-references"><span class="header-section-number">3</span> References</a></li>
   </ul>
@@ -3099,8 +3101,8 @@ vertical-align: -.125em;
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Time Series Augmented Random Forest Models for Stock Market Index Direction Prediction</h1>
-<p class="subtitle lead">UWF Capstone</p>
+<h1 class="title">Predicting Stock Market Index Direction Using ARIMA-Augmented Quantum Random Forest Models</h1>
+<p class="subtitle lead">Integrating Quantum Computing, Machine Learning and Classical Time Series Modeling</p>
 </div>
 
 
@@ -3141,7 +3143,7 @@ vertical-align: -.125em;
 </section>
 <section id="sec-problem" class="level2" data-number="1.3">
 <h2 data-number="1.3" class="anchored" data-anchor-id="sec-problem"><span class="header-section-number">1.3</span> Research Problem</h2>
-<p>The objective is to use my course work, current literature, and intent on future research to classify the market movement as either upward or downward. Because Random Forest has no memory I will use both machine learning and time series modeling to identify optimal lags and moving averages and introduce these variables during feature engineering.</p>
+<p>The objective is to use my course work, current literature, and intent on future research to classify the market movement as either upward or downward. Because Random Forest has no memory I will use both machine learning, time series modeling, and quantum circuits to identify optimal lags and moving averages and introduce these variables during feature engineering.</p>
 </section>
 <section id="sec-objectives" class="level2" data-number="1.4">
 <h2 data-number="1.4" class="anchored" data-anchor-id="sec-objectives"><span class="header-section-number">1.4</span> Research Objectives</h2>
@@ -3157,7 +3159,7 @@ vertical-align: -.125em;
 </section>
 <section id="sec-organization" class="level2" data-number="1.7">
 <h2 data-number="1.7" class="anchored" data-anchor-id="sec-organization"><span class="header-section-number">1.7</span> Capstone Project Organization</h2>
-<p>This project will consist of a section covering the background, theory, recent research, and explanation of: - Random Forest models - Auto Regressive Moving Average (ARMA) models - Generalized AutoRegressive Conditional Heteroskedasticity (GARCH) models of volatility - Vector Autoregressive (VAR) models and Multivariate Time Series analysis - Hybrid models</p>
+<p>This project will consist of a section covering the background, theory, recent research, and explanation of: - Random Forest models - Auto Regressive Moving Average (ARMA) models - Generalized AutoRegressive Conditional Heteroskedasticity (GARCH) models of volatility - Vector Autoregressive (VAR) models and Multivariate Time Series analysis - Hybrid models - Quantum Random Forest</p>
 <p>I will being with a literature review, outline my methodology and dataset, state dataset statistical information, perform feature engineering, train and measure my models, review the findings, and discuss their implications.</p>
 </section>
 </section>
@@ -3174,12 +3176,22 @@ vertical-align: -.125em;
 <section id="garch-models-of-volatility" class="level2" data-number="2.3">
 <h2 data-number="2.3" class="anchored" data-anchor-id="garch-models-of-volatility"><span class="header-section-number">2.3</span> GARCH Models of Volatility</h2>
 </section>
+<section id="vector-autoregressive-var-and-multivariate-time-series-analysis" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="vector-autoregressive-var-and-multivariate-time-series-analysis"><span class="header-section-number">2.4</span> Vector Autoregressive (VAR) and Multivariate Time Series Analysis</h2>
+</section>
+<section id="quantum-random-forest" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="quantum-random-forest"><span class="header-section-number">2.5</span> Quantum Random Forest</h2>
+<p>– ref <span class="citation" data-cites="Srikumar2024QuantumRandomForest">(<a href="#ref-Srikumar2024QuantumRandomForest" role="doc-biblioref">Srikumar, Hill, and Hollenberg 2024</a>)</span> – git at https://github.com/maiyuren/Quantum-Random-Forest</p>
+</section>
 </section>
 <section id="sec-references" class="level1" data-number="3">
 <h1 data-number="3"><span class="header-section-number">3</span> References</h1>
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
 <div id="ref-box2015time" class="csl-entry" role="listitem">
 Box, George E. P., Gwilym M. Jenkins, Gregory C. Reinsel, and Greta M. Ljung. 2015. <em>Time Series Analysis: Forecasting and Control</em>. 5th ed. Hoboken, NJ: John Wiley &amp; Sons. <a href="https://www.researchgate.net/publication/299459188_Time_Series_Analysis_Forecasting_and_Control5th_Edition_by_George_E_P_Box_Gwilym_M_Jenkins_Gregory_C_Reinsel_and_Greta_M_Ljung_2015_Published_by_John_Wiley_and_Sons_Inc_Hoboken_New_Jersey_pp_712_ISBN_">https://www.researchgate.net/publication/299459188_Time_Series_Analysis_Forecasting_and_Control5th_Edition_by_George_E_P_Box_Gwilym_M_Jenkins_Gregory_C_Reinsel_and_Greta_M_Ljung_2015_Published_by_John_Wiley_and_Sons_Inc_Hoboken_New_Jersey_pp_712_ISBN_</a>.
+</div>
+<div id="ref-Srikumar2024QuantumRandomForest" class="csl-entry" role="listitem">
+Srikumar, Maiyuren, Charles D. Hill, and Lloyd C. L. Hollenberg. 2024. <span>“A Kernel-Based Quantum Random Forest for Improved Classification.”</span> <em>Quantum Machine Intelligence</em> 6 (1): 10. <a href="https://doi.org/10.1007/s42484-023-00131-2">https://doi.org/10.1007/s42484-023-00131-2</a>.
 </div>
 </div>
 </section>
