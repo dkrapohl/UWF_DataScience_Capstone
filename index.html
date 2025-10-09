@@ -21,7 +21,27 @@ ul.task-list li input[type="checkbox"] {
 width: 0.8em;
 margin: 0 0.8em 0.2em -1em;  vertical-align: middle;
 }
-</style>
+
+div.csl-bib-body { }
+div.csl-entry {
+clear: both;
+margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+margin-left:2em;
+text-indent:-2em;
+}
+div.csl-left-margin {
+min-width:2em;
+float:left;
+}
+div.csl-right-inline {
+margin-left:2em;
+padding-left:1em;
+}
+div.csl-indent {
+margin-left: 2em;
+}</style>
 
 
 <script>/*!
@@ -3058,16 +3078,20 @@ vertical-align: -.125em;
   <li><a href="#sec-introduction" id="toc-sec-introduction" class="nav-link active" data-scroll-target="#sec-introduction"><span class="header-section-number">1</span> Introduction</a>
   <ul class="collapse">
   <li><a href="#sec-background" id="toc-sec-background" class="nav-link" data-scroll-target="#sec-background"><span class="header-section-number">1.1</span> Background and Motivation</a></li>
-  <li><a href="#sec-problem" id="toc-sec-problem" class="nav-link" data-scroll-target="#sec-problem"><span class="header-section-number">1.2</span> Research Problem</a></li>
-  <li><a href="#sec-objectives" id="toc-sec-objectives" class="nav-link" data-scroll-target="#sec-objectives"><span class="header-section-number">1.3</span> Research Objectives</a></li>
-  <li><a href="#sec-significance" id="toc-sec-significance" class="nav-link" data-scroll-target="#sec-significance"><span class="header-section-number">1.4</span> Purpose of Study</a></li>
-  <li><a href="#sec-scope" id="toc-sec-scope" class="nav-link" data-scroll-target="#sec-scope"><span class="header-section-number">1.5</span> Scope and Limitations</a></li>
-  <li><a href="#sec-organization" id="toc-sec-organization" class="nav-link" data-scroll-target="#sec-organization"><span class="header-section-number">1.6</span> Capstone Project Organization</a></li>
+  <li><a href="#link-to-project-code" id="toc-link-to-project-code" class="nav-link" data-scroll-target="#link-to-project-code"><span class="header-section-number">1.2</span> Link to Project Code</a></li>
+  <li><a href="#sec-problem" id="toc-sec-problem" class="nav-link" data-scroll-target="#sec-problem"><span class="header-section-number">1.3</span> Research Problem</a></li>
+  <li><a href="#sec-objectives" id="toc-sec-objectives" class="nav-link" data-scroll-target="#sec-objectives"><span class="header-section-number">1.4</span> Research Objectives</a></li>
+  <li><a href="#sec-significance" id="toc-sec-significance" class="nav-link" data-scroll-target="#sec-significance"><span class="header-section-number">1.5</span> Purpose of Study</a></li>
+  <li><a href="#sec-scope" id="toc-sec-scope" class="nav-link" data-scroll-target="#sec-scope"><span class="header-section-number">1.6</span> Scope and Limitations</a></li>
+  <li><a href="#sec-organization" id="toc-sec-organization" class="nav-link" data-scroll-target="#sec-organization"><span class="header-section-number">1.7</span> Capstone Project Organization</a></li>
   </ul></li>
   <li><a href="#sec-literature" id="toc-sec-literature" class="nav-link" data-scroll-target="#sec-literature"><span class="header-section-number">2</span> Literature Review</a>
   <ul class="collapse">
   <li><a href="#sec-lit-overview" id="toc-sec-lit-overview" class="nav-link" data-scroll-target="#sec-lit-overview"><span class="header-section-number">2.1</span> Overview of Stock Market Prediction</a></li>
+  <li><a href="#sarima-and-arima-time-series-model-development" id="toc-sarima-and-arima-time-series-model-development" class="nav-link" data-scroll-target="#sarima-and-arima-time-series-model-development"><span class="header-section-number">2.2</span> SARIMA and ARIMA Time Series Model Development</a></li>
+  <li><a href="#garch-models-of-volatility" id="toc-garch-models-of-volatility" class="nav-link" data-scroll-target="#garch-models-of-volatility"><span class="header-section-number">2.3</span> GARCH Models of Volatility</a></li>
   </ul></li>
+  <li><a href="#sec-references" id="toc-sec-references" class="nav-link" data-scroll-target="#sec-references"><span class="header-section-number">3</span> References</a></li>
   </ul>
 <div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="index.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
 </div>
@@ -3111,24 +3135,28 @@ vertical-align: -.125em;
 <h2 data-number="1.1" class="anchored" data-anchor-id="sec-background"><span class="header-section-number">1.1</span> Background and Motivation</h2>
 <p>Short-term stock market forecasting is a common challenge engaged by many millions of analysts and investors daily. Stock market data is frequently non-linear and is influenced by not only financial drivers but also geopolitical and macroeconomic policies and events. Random Forest has demonstrated the ability to handle non-linear, heterogeneous features while being explainable and resistant to overfitting. One basic issue with Random Forest models are that they do not intrinsically have memory and so can miss opportunities that are based on time-based influences in variables.</p>
 </section>
-<section id="sec-problem" class="level2" data-number="1.2">
-<h2 data-number="1.2" class="anchored" data-anchor-id="sec-problem"><span class="header-section-number">1.2</span> Research Problem</h2>
+<section id="link-to-project-code" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="link-to-project-code"><span class="header-section-number">1.2</span> Link to Project Code</h2>
+<p>The Jupyter Notebook is available from <a href="https://github.com/dkrapohl/UWF_DataScience_Capstone/blob/main/DS_Capstone.ipynb"><strong>https://github.com/dkrapohl/UWF_DataScience_Capstone/blob/main/DS_Capstone.ipynb</strong></a></p>
+</section>
+<section id="sec-problem" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="sec-problem"><span class="header-section-number">1.3</span> Research Problem</h2>
 <p>The objective is to use my course work, current literature, and intent on future research to classify the market movement as either upward or downward. Because Random Forest has no memory I will use both machine learning and time series modeling to identify optimal lags and moving averages and introduce these variables during feature engineering.</p>
 </section>
-<section id="sec-objectives" class="level2" data-number="1.3">
-<h2 data-number="1.3" class="anchored" data-anchor-id="sec-objectives"><span class="header-section-number">1.3</span> Research Objectives</h2>
+<section id="sec-objectives" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="sec-objectives"><span class="header-section-number">1.4</span> Research Objectives</h2>
 <p>I intend to develop a hybrid methodology combining ARMA feature engineering with Random Forest classification, identify optimal lag structures and moving average windows through systematic time series analysis, evaluate model performance using multiple metrics, and determine feature importance for market direction prediction.</p>
 </section>
-<section id="sec-significance" class="level2" data-number="1.4">
-<h2 data-number="1.4" class="anchored" data-anchor-id="sec-significance"><span class="header-section-number">1.4</span> Purpose of Study</h2>
+<section id="sec-significance" class="level2" data-number="1.5">
+<h2 data-number="1.5" class="anchored" data-anchor-id="sec-significance"><span class="header-section-number">1.5</span> Purpose of Study</h2>
 <p>I will use my coursework, readings, coding, and statistical knowledge to synthesize an approach to analysis that, although not novel in academia, is new to me. I will not be using any of the tools developed in my coursework to identify, train, tune, and measure the models I build so that I may perform real-world analysis of a type I believe to be relevant to many datasets with which I’ve worked.</p>
 </section>
-<section id="sec-scope" class="level2" data-number="1.5">
-<h2 data-number="1.5" class="anchored" data-anchor-id="sec-scope"><span class="header-section-number">1.5</span> Scope and Limitations</h2>
+<section id="sec-scope" class="level2" data-number="1.6">
+<h2 data-number="1.6" class="anchored" data-anchor-id="sec-scope"><span class="header-section-number">1.6</span> Scope and Limitations</h2>
 <p>The data will be from the United States Standard &amp; Poor’s S&amp;P 500 index covering 1990-2024. The forward-looking limits will be 20 days and the predicted outcome will be binary (up/down).</p>
 </section>
-<section id="sec-organization" class="level2" data-number="1.6">
-<h2 data-number="1.6" class="anchored" data-anchor-id="sec-organization"><span class="header-section-number">1.6</span> Capstone Project Organization</h2>
+<section id="sec-organization" class="level2" data-number="1.7">
+<h2 data-number="1.7" class="anchored" data-anchor-id="sec-organization"><span class="header-section-number">1.7</span> Capstone Project Organization</h2>
 <p>This project will consist of a section covering the background, theory, recent research, and explanation of: - Random Forest models - Auto Regressive Moving Average (ARMA) models - Generalized AutoRegressive Conditional Heteroskedasticity (GARCH) models of volatility - Vector Autoregressive (VAR) models and Multivariate Time Series analysis - Hybrid models</p>
 <p>I will being with a literature review, outline my methodology and dataset, state dataset statistical information, perform feature engineering, train and measure my models, review the findings, and discuss their implications.</p>
 </section>
@@ -3139,6 +3167,21 @@ vertical-align: -.125em;
 <h2 data-number="2.1" class="anchored" data-anchor-id="sec-lit-overview"><span class="header-section-number">2.1</span> Overview of Stock Market Prediction</h2>
 <p>Stock market prediction prior to the 1960s was based on technical or fundamental analysis, both of which are used today. Technical analysis involves analyzing charts of stock prices to look for long- and short-term cycles and patterns. Fundamental analysis is the use of company and industry data including balance sheets, contracts, and forecasts to try to determine the current and future value of a company. In the 1960s the Efficient Market Hypothesis (EMH) was the most common theory of how market pricing worked. In this, the price of a stock instantly reflected all information that could affect the price with the implication that constant changes in price are largely random and unpredictable. In the 1980s more computing power and advanced mathematical approaches identified subtle patterns within this “randomness” indicating the movements are not entirely random. Behavioral Economics showed that human and group psychology provided one mechanism by which pricing changes could violate the Efficient Market Hypothesis. The development of Autoregressive Integrated Moving Average (ARIMA) models provided the ability to forecast with more quantitative rigor. In the 2000s computing power and algorithm development advanced further leading to machine learning developments including Random Forest, Support Vector Machines, Recurrent Neural Networks, and Long- Short-term memory (LSTM) models the latter of which benefitted from both temporal memory as well as the ability to “forget” weakly interacting data points.</p>
 </section>
+<section id="sarima-and-arima-time-series-model-development" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="sarima-and-arima-time-series-model-development"><span class="header-section-number">2.2</span> SARIMA and ARIMA Time Series Model Development</h2>
+<p>There were some foundational research projects in the 1920s that set the stage for the development of Seasonal Autoregressive Integrated Moving Average (SARIMA), a form of ARIMA in 1970 in part by Box and Jenkins <span class="citation" data-cites="box2015time">(<a href="#ref-box2015time" role="doc-biblioref">Box et al. 2015</a>)</span>. SARIMA adds seasonality to ARIMA models and tries to find the simplest (most parsimonious) model by identifying the stationarity of data, estimate model parameter values, and checking the validity of the model. The concept of stationarity is the measure of whether a series of data have a trend or seasonality. The removal of trend and seasonality was determined to provide a more robust model<span class="citation" data-cites="box2015time">(<a href="#ref-box2015time" role="doc-biblioref">Box et al. 2015</a>)</span>. One aspect of these time series models that limit their use is that the data must be able to be rendered stationary for the models to be valid.</p>
+</section>
+<section id="garch-models-of-volatility" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="garch-models-of-volatility"><span class="header-section-number">2.3</span> GARCH Models of Volatility</h2>
+</section>
+</section>
+<section id="sec-references" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-box2015time" class="csl-entry" role="listitem">
+Box, George E. P., Gwilym M. Jenkins, Gregory C. Reinsel, and Greta M. Ljung. 2015. <em>Time Series Analysis: Forecasting and Control</em>. 5th ed. Hoboken, NJ: John Wiley &amp; Sons. <a href="https://www.researchgate.net/publication/299459188_Time_Series_Analysis_Forecasting_and_Control5th_Edition_by_George_E_P_Box_Gwilym_M_Jenkins_Gregory_C_Reinsel_and_Greta_M_Ljung_2015_Published_by_John_Wiley_and_Sons_Inc_Hoboken_New_Jersey_pp_712_ISBN_">https://www.researchgate.net/publication/299459188_Time_Series_Analysis_Forecasting_and_Control5th_Edition_by_George_E_P_Box_Gwilym_M_Jenkins_Gregory_C_Reinsel_and_Greta_M_Ljung_2015_Published_by_John_Wiley_and_Sons_Inc_Hoboken_New_Jersey_pp_712_ISBN_</a>.
+</div>
+</div>
 </section>
 
 </main>

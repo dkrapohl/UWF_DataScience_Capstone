@@ -34,6 +34,11 @@ editor:
 
 Short-term stock market forecasting is a common challenge engaged by many millions of analysts and investors daily. Stock market data is frequently non-linear and is influenced by not only financial drivers but also geopolitical and macroeconomic policies and events. Random Forest has demonstrated the ability to handle non-linear, heterogeneous features while being explainable and resistant to overfitting. One basic issue with Random Forest models are that they do not intrinsically have memory and so can miss opportunities that are based on time-based influences in variables.
 
+## Link to Project Code
+
+The Jupyter Notebook is available from [**https://github.com/dkrapohl/UWF_DataScience_Capstone/blob/main/DS_Capstone.ipynb**](https://github.com/dkrapohl/UWF_DataScience_Capstone/blob/main/DS_Capstone.ipynb)
+
+
 ## Research Problem {#sec-problem}
 
 The objective is to use my course work, current literature, and intent on future research to classify the market movement as either upward or downward. Because Random Forest has no memory I will use both machine learning and time series modeling to identify optimal lags and moving averages and introduce these variables during feature engineering.
@@ -66,3 +71,22 @@ I will being with a literature review, outline my methodology and dataset, state
 ## Overview of Stock Market Prediction {#sec-lit-overview}
 
 Stock market prediction prior to the 1960s was based on technical or fundamental analysis, both of which are used today. Technical analysis involves analyzing charts of stock prices to look for long- and short-term cycles and patterns. Fundamental analysis is the use of company and industry data including balance sheets, contracts, and forecasts to try to determine the current and future value of a company. In the 1960s the Efficient Market Hypothesis (EMH) was the most common theory of how market pricing worked. In this, the price of a stock instantly reflected all information that could affect the price with the implication that constant changes in price are largely random and unpredictable. In the 1980s more computing power and advanced mathematical approaches identified subtle patterns within this "randomness" indicating the movements are not entirely random. Behavioral Economics showed that human and group psychology provided one mechanism by which pricing changes could violate the Efficient Market Hypothesis. The development of Autoregressive Integrated Moving Average (ARIMA) models provided the ability to forecast with more quantitative rigor. In the 2000s computing power and algorithm development advanced further leading to machine learning developments including Random Forest, Support Vector Machines, Recurrent Neural Networks, and Long- Short-term memory (LSTM) models the latter of which benefitted from both temporal memory as well as the ability to "forget" weakly interacting data points.
+
+## SARIMA and ARIMA Time Series Model Development
+
+There were some foundational research projects in the 1920s that set the stage for the development of Seasonal Autoregressive Integrated Moving Average (SARIMA), a form of ARIMA in 1970 in part by Box and Jenkins [@box2015time]. SARIMA adds seasonality to ARIMA models and tries to find the simplest (most parsimonious) model by identifying the stationarity of data, estimate model parameter values, and checking the validity of the model. The concept of stationarity is the measure of whether a series of data have a trend or seasonality. The removal of trend and seasonality was determined to provide a more robust model[@box2015time]. One aspect of these time series models that limit their use is that the data must be able to be rendered stationary for the models to be valid.
+
+## GARCH Models of Volatility
+
+
+
+
+
+
+
+
+# References {#sec-references}
+
+::: {#refs}
+:::
+
