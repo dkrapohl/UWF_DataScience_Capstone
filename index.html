@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Don Krapohl (Advisor: Dr. Shusen Pu)">
-<meta name="dcterms.date" content="2025-10-08">
+<meta name="dcterms.date" content="2025-10-09">
 
 <title>Predicting Stock Market Index Direction Using ARIMA-Augmented Quantum Random Forest Models</title>
 <style>
@@ -3119,7 +3119,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 8, 2025</p>
+      <p class="date">October 9, 2025</p>
     </div>
   </div>
   
@@ -3175,13 +3175,16 @@ vertical-align: -.125em;
 </section>
 <section id="garch-models-of-volatility" class="level2" data-number="2.3">
 <h2 data-number="2.3" class="anchored" data-anchor-id="garch-models-of-volatility"><span class="header-section-number">2.3</span> GARCH Models of Volatility</h2>
+<p>Generalized AutoRegressive Conditional Heteroskedasticity (GARCH) is an extension to the 1982 Nobel prize winning AutoRegressive Conditional Heteroskedasticity (ARCH) system that rely on the observation that periods of high volatility tend to cluster together in time. This allows ARIMA models to capture risk over the timeframe of the model and can compensate for limitations of the heterskedasticity assumption of an ARIMA model by allowing variance to be dynamic.</p>
 </section>
 <section id="vector-autoregressive-var-and-multivariate-time-series-analysis" class="level2" data-number="2.4">
 <h2 data-number="2.4" class="anchored" data-anchor-id="vector-autoregressive-var-and-multivariate-time-series-analysis"><span class="header-section-number">2.4</span> Vector Autoregressive (VAR) and Multivariate Time Series Analysis</h2>
+<p>The addition of Vector Autoregression (VAR) models were developed in the early 1980s to capture the reality of financial markets, that they are influenced by many internal and external factors such as interest rates, unemployment, current volatility, current pricing levels, and many others. These factors have complex and dynamic influence on each other. VAR models are designed to capture current values and relationships as well as past values and their relationships. This is in contrast to the commonly 1- or 2-dimensional SARIMA models capturing linear dynamics over time.</p>
+<p>So far I’ve discussed univariate time series models (ARMA, GARCH) that model a single variable over time. But financial markets don’t exist in isolation - the S&amp;P 500, VIX, interest rates, and unemployment all influence each other simultaneously. <strong>Vector Autoregression (VAR)</strong> models capture these dynamic relationships. VAR models also capture systemic shock propogation and the duration and power of their effect on the market.</p>
 </section>
 <section id="quantum-random-forest" class="level2" data-number="2.5">
 <h2 data-number="2.5" class="anchored" data-anchor-id="quantum-random-forest"><span class="header-section-number">2.5</span> Quantum Random Forest</h2>
-<p>– ref <span class="citation" data-cites="Srikumar2024QuantumRandomForest">(<a href="#ref-Srikumar2024QuantumRandomForest" role="doc-biblioref">Srikumar, Hill, and Hollenberg 2024</a>)</span> – git at https://github.com/maiyuren/Quantum-Random-Forest</p>
+<p>Within the scope of my Random Forest (RF) study, traditional Random Forest uses standard compute approaches. Cloud services such as Amazon Braket provide quantum compute and compute simulators that add quantum compute paradigms to the RF and other machine learning algorithms. One of the key capabilities in quantum RF (QRF) is the ability to move Gini impurity index calculation into a higher dimensional space, which may make the data more separable.</p>
 </section>
 </section>
 <section id="sec-references" class="level1" data-number="3">
@@ -3189,9 +3192,6 @@ vertical-align: -.125em;
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
 <div id="ref-box2015time" class="csl-entry" role="listitem">
 Box, George E. P., Gwilym M. Jenkins, Gregory C. Reinsel, and Greta M. Ljung. 2015. <em>Time Series Analysis: Forecasting and Control</em>. 5th ed. Hoboken, NJ: John Wiley &amp; Sons. <a href="https://www.researchgate.net/publication/299459188_Time_Series_Analysis_Forecasting_and_Control5th_Edition_by_George_E_P_Box_Gwilym_M_Jenkins_Gregory_C_Reinsel_and_Greta_M_Ljung_2015_Published_by_John_Wiley_and_Sons_Inc_Hoboken_New_Jersey_pp_712_ISBN_">https://www.researchgate.net/publication/299459188_Time_Series_Analysis_Forecasting_and_Control5th_Edition_by_George_E_P_Box_Gwilym_M_Jenkins_Gregory_C_Reinsel_and_Greta_M_Ljung_2015_Published_by_John_Wiley_and_Sons_Inc_Hoboken_New_Jersey_pp_712_ISBN_</a>.
-</div>
-<div id="ref-Srikumar2024QuantumRandomForest" class="csl-entry" role="listitem">
-Srikumar, Maiyuren, Charles D. Hill, and Lloyd C. L. Hollenberg. 2024. <span>“A Kernel-Based Quantum Random Forest for Improved Classification.”</span> <em>Quantum Machine Intelligence</em> 6 (1): 10. <a href="https://doi.org/10.1007/s42484-023-00131-2">https://doi.org/10.1007/s42484-023-00131-2</a>.
 </div>
 </div>
 </section>

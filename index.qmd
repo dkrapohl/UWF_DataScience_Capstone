@@ -79,14 +79,20 @@ There were some foundational research projects in the 1920s that set the stage f
 
 ## GARCH Models of Volatility
 
+Generalized AutoRegressive Conditional Heteroskedasticity (GARCH) is an extension to the 1982 Nobel prize winning AutoRegressive Conditional Heteroskedasticity (ARCH) system that rely on the observation that periods of high volatility tend to cluster together in time. This allows ARIMA models to capture risk over the timeframe of the model and can compensate for limitations of the heterskedasticity assumption of an ARIMA model by allowing variance to be dynamic.
+
 
 ## Vector Autoregressive (VAR) and Multivariate Time Series Analysis
+
+The addition of Vector Autoregression (VAR) models were developed in the early 1980s to capture the reality of financial markets, that they are influenced by many internal and external factors such as interest rates, unemployment, current volatility, current pricing levels, and many others. These factors have complex and dynamic influence on each other. VAR models are designed to capture current values and relationships as well as past values and their relationships. This is in contrast to the commonly 1- or 2-dimensional SARIMA models capturing linear dynamics over time.
+
+So far I've discussed univariate time series models (ARMA, GARCH) that model a single variable over time. But financial markets don't exist in isolation - the S&P 500, VIX, interest rates, and unemployment all influence each other simultaneously. **Vector Autoregression (VAR)** models capture these dynamic relationships. VAR models also capture systemic shock propogation and the duration and power of their effect on the market.
 
 
 ## Quantum Random Forest
 
--- ref [@Srikumar2024QuantumRandomForest]
--- git at https://github.com/maiyuren/Quantum-Random-Forest
+Within the scope of my Random Forest (RF) study, traditional Random Forest uses standard compute approaches. Cloud services such as Amazon Braket provide quantum compute and compute simulators that add quantum compute paradigms to the RF and other machine learning algorithms. One of the key capabilities in quantum RF (QRF) is the ability to move Gini impurity index calculation into a higher dimensional space, which may make the data more separable. 
+
 
 
 
