@@ -1,21 +1,20 @@
-# Instructions
+# UWF Capstone repository
 
-Create a GitHub page for the project
+This repository is in support of my University of West Florida graduate capstone and presentation for my Master's of Data Science and Statistics degree to be completed December, 2025.
 
-## GitHub:
-#### 1. Create a GitHub account and Sign in
-#### 2. Go to [https://github.com/capstone4ds/capstone4ds_template](https://github.com/capstone4ds/capstone4ds_template) and fork (create a copy to your GitHub)
-![fork](fork.png)
-#### 3. Change the name of the repo to *IDC6940_GroupName*
-#### 4. Go to *Settings* -> *Pages* -> under *Branch* -> select *main*
-#### 5. Wait for a few seconds and refresh the page. You see the link of the page. 
 
-## RStudio:
-#### 1. Go to RStudio
-#### 2. Create a Version Control Project and Clone the repo.
-#### 3. Commit and push to see changes on the website et Voilà!
+## Paper
 
-More information:
-- [GitHub](https://happygitwithr.com/index.html)
-- [Video1 RStudio connection to GitHub](https://www.youtube.com/watch?v=MdmnE3AnkQE)
-- [Video2 RStudio connection to GitHub](https://www.youtube.com/watch?v=jN6tvgt3GK8)
+Please see the live paper at https://dkrapohl.github.io/UWF_DataScience_Capstone/
+
+## Source Code
+
+The Jupyter notebook to support the work is https://github.com/dkrapohl/UWF_DataScience_Capstone/blob/main/DS_Capstone.ipynb
+
+The notebook is also posted to Google Colab at https://colab.research.google.com/drive/1VeC-n9052KaQaHkMk4K5dg9zdRCDJscM?usp=sharing
+
+A copy will be posted to Kaggle.
+
+## Data
+
+The datasets will be provided in this repository and Google Colab and Kaggle if appropriate
