@@ -79,17 +79,17 @@ There were some foundational research projects in the 1920s that set the stage f
 
 ## GARCH Models of Volatility
 
-Generalized AutoRegressive Conditional Heteroskedasticity (GARCH) is an extension to the 1982 Nobel prize winning AutoRegressive Conditional Heteroskedasticity (ARCH) system that rely on the observation that periods of high volatility tend to cluster together in time. This allows ARIMA models to capture risk over the timeframe of the model and can compensate for limitations of the heterskedasticity assumption of an ARIMA model by allowing variance to be dynamic.
+Generalized AutoRegressive Conditional Heteroskedasticity (GARCH) is an extension to the 1982 Nobel prize winning AutoRegressive Conditional Heteroskedasticity (ARCH) system that rely on the observation that periods of high volatility tend to cluster together in time [@bollerslev1986]. This allows ARIMA models to capture risk over the timeframe of the model and can compensate for limitations of the heterskedasticity assumption of an ARIMA model by allowing variance to be dynamic.
 
 
 ## Vector Autoregressive (VAR) and Multivariate Time Series Analysis
 
-The addition of Vector Autoregression (VAR) models were developed in the early 1980s to capture the reality of financial markets, that they are influenced by many internal and external factors such as interest rates, unemployment, current volatility, current pricing levels, and many others. These factors have complex and dynamic influence on each other. VAR models are designed to capture current values and relationships as well as past values and their relationships. This is in contrast to the commonly 1- or 2-dimensional SARIMA models capturing linear dynamics over time.
+The addition of Vector Autoregression (VAR) models were developed in the early 1980s to capture the reality of financial markets, that they are influenced by many internal and external factors such as interest rates, unemployment, current volatility, current pricing levels, and many others [@sims1980]. These factors have complex and dynamic influence on each other. VAR models are designed to capture current values and relationships as well as past values and their relationships. This is in contrast to the commonly 1- or 2-dimensional SARIMA models capturing linear dynamics over time.
 
 
 ## Quantum Random Forest
 
-Within the scope of my Random Forest (RF) study, traditional Random Forest uses standard compute approaches. Cloud services such as Amazon Braket provide quantum compute and compute simulators that add quantum compute paradigms to the RF and other machine learning algorithms. One of the key capabilities in quantum RF (QRF) is the ability to move Gini impurity index calculation into a higher dimensional space, which may make the data more separable. 
+Within the scope of my Random Forest (RF) study, traditional Random Forest uses standard compute approaches. Cloud services such as Amazon Braket provide quantum compute and compute simulators that add quantum compute paradigms to the RF and other machine learning algorithms. One of the key capabilities in quantum RF (QRF) is the ability to move Gini impurity index calculation into a higher dimensional space, which may make the data more separable [@Srikumar2024QuantumRandomForest]. 
 
 # Theoretical Framework {#sec-theory}
 
@@ -202,6 +202,11 @@ $$\Delta Y_t = \alpha + \beta t + \gamma Y_{t-1} + \sum_{i=1}^{p} \delta_i \Delt
 Autocorrelation function (ACF):
 
 $$\rho(k) = \frac{Cov(X_t, X_{t-k})}{\sqrt{Var(X_t)Var(X_{t-k})}} = \frac{\gamma(k)}{\gamma(0)}$$
+
+Partial Autocorrelation Function (PACF):
+$$\phi_{kk} = \text{Corr}(y_t - \hat{y}_t(1,\dots,k-1),\; y_{t-k} - \hat{y}_{t-k}(1,\dots,k-1))$$
+The Partial Autocorrelation Function (PACF) provides the relationship between the observation and the observation at lag $k$ removing the influence of all shorter lag periods. In viewing the plot the PACF drops off after lag $p$ in the AR($p$) process providing an indicator of the order of the AR model.
+
 
 ### ARMA Model Structure {#sec-theory-arma}
 
