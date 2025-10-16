@@ -65,7 +65,7 @@ This project will consist of a section covering the background, theory, recent r
 - Hybrid models
 - Quantum Random Forest
 
-I will being with a literature review, outline my methodology and dataset, state dataset statistical information, perform feature engineering, train and measure my models, review the findings, and discuss their implications.
+I will being with a literature review, provide a theoretical background, outline my methodology and dataset, state dataset statistical information, perform feature engineering, train and measure my models, review the findings, and discuss their implications.
 
 # Literature Review {#sec-literature}
 
@@ -86,16 +86,162 @@ Generalized AutoRegressive Conditional Heteroskedasticity (GARCH) is an extensio
 
 The addition of Vector Autoregression (VAR) models were developed in the early 1980s to capture the reality of financial markets, that they are influenced by many internal and external factors such as interest rates, unemployment, current volatility, current pricing levels, and many others. These factors have complex and dynamic influence on each other. VAR models are designed to capture current values and relationships as well as past values and their relationships. This is in contrast to the commonly 1- or 2-dimensional SARIMA models capturing linear dynamics over time.
 
-So far I've discussed univariate time series models (ARMA, GARCH) that model a single variable over time. But financial markets don't exist in isolation - the S&P 500, VIX, interest rates, and unemployment all influence each other simultaneously. **Vector Autoregression (VAR)** models capture these dynamic relationships. VAR models also capture systemic shock propogation and the duration and power of their effect on the market.
-
 
 ## Quantum Random Forest
 
 Within the scope of my Random Forest (RF) study, traditional Random Forest uses standard compute approaches. Cloud services such as Amazon Braket provide quantum compute and compute simulators that add quantum compute paradigms to the RF and other machine learning algorithms. One of the key capabilities in quantum RF (QRF) is the ability to move Gini impurity index calculation into a higher dimensional space, which may make the data more separable. 
 
+# Theoretical Framework {#sec-theory}
+
+## Random Forest Methodology {#sec-theory-rf}
+
+### Decision Tree Introduction {#sec-theory-trees}
+
+A decision tree is a structure that captures decisions t0 provide the ability to make decisions about data. Decision paths are constructed mathematically during model building that provide guidance through the structure to the bottom of the tree, the final node of which serves as the prediction. Training begins with a top-level node. Data below this node are split in a manner that increases the "purity" of one class under analysis. The process is repeated recursively with the data below each node increasingly partitioned to favor a single class until a stopping point occurs at which the final "leaf" nodes are composed of only a single class (pure) or a stopping criteria is hit. Stopping criteria may be maximum depth or minimum samples in a node.
 
 
+Mathematically, during recursion we have a dataset D composed of n samples. We perform a greedy (optimized for the current decision not considering future decisions) search over:
+- All classes in the dataset: $X_1, X_2, ..., X_p$ 
+- The valid range of values for each class
 
+The objective is to maximize "purity" with a single class dominating each branch until purity or stopping criteria are reached.
+
+### Splitting Criteria {#sec-theory-splitting}
+
+There are different mathematical criteria possible to use to determine splits at each node but the most common in practice is Gini Impurity, which measures how much each child node focuses on a single class versus the same measure for the node's parent. Entropy and misclassification error are alternatives to Gini Impurity.
+
+Gini Impurity measures the degree of specialization of each child node in comparison to its parent. Gini Impurity is likewise the probability of misclassification if we randomly assign class labels based on class distribution at the node. The formula for Gini Impurity is:
+
+$$G = 1 - \sum_{i=1}^{C} p_i^2$$
+
+where $G$ is the Gini impurity measure of the node, $C$ is the number of classes in the dataset, and $p_i$ is the proportion of samples in the node that belong to class $i$.
+
+Entropy is the next most widely used splitting criteria measure and is less computationally efficient than Gini. It uses logarithmic operations to compute how to balance the child nodes. Also, because it is logarithmic an additional rule must be set for cases where the algorithm might attempt to perform log(0) at a split. The measure of Entropy is "bits" with values at the node ranging from 0 indicating the class is pure to log_2(n_classes) indicating an even split among classes (highest uncertainty). The formula for Entropy is:
+
+$$H = -\sum_{i=1}^{C} p_i \log_2(p_i)$$.
+
+where $p_i$ is the proportion of samples in the node that belong to class $i$.
+
+
+Gini and Entropy frequently result in analagous tree splits [@raileanu2004]. Because of this exploration of the ideal splitting criteria measure is recommended but Gini is frequently used if the dataset or number of classes is large.
+
+### Ensemble Learning {#sec-theory-ensemble}
+
+Decision trees are very sensitive to the subset of data selected for training and a single tree will have high variance. The insight of the phenomenon of the "wisdom of crowds", that a collection of moderate or poor opinions can be averaged to create a predictor superior to that of the individuals in it provides the basis for the ensemble learning approach used by Random Forest. The concept of Bootstrap Aggregation (Bagging) introduced by Breiman [@breiman1984] provided the algorithm:
+
+1. Create a dataset for each tree composed of a data subset of roughly equal number of samples, with replacement
+2. Fit a decision tree on each subset. By definition each tree will likely be different.
+3. At prediction time take the majority vote across all trees for classification, the mean prediction across all trees for regression.
+
+If each tree has variance $\sigma^2$ the average variance for $B$ independent predictors is:
+
+$$\text{Var}(\bar{f}) = \frac{\sigma^2}{B}$$
+This means with ensemble learning with 1000 trees the average variance is 1/1000th that of an individual tree.
+
+### Random Forest Algorithm {#sec-theory-rf-algorighm}
+
+In Random Forest the data are sampled $B$ times to produce $B$ trees. Within each tree a subset of features are selected and the split calculated according to the splitting criteria measure (Gini or Entropy as above). Each tree is grown down until purity or stopping criteria are reached. Pruning may occur where nodes are eliminated that provide low value to the prediction. 
+
+::: {.callout-note}
+## Random Forest Algorithm Pseudocode
+
+
+```
+# Training:
+Input: training data (X, y), number of trees B
+
+For t = 1 to B:
+    1. Sample n values from the training data.
+    2. Train a decision tree using the sample:
+        a. At each split:
+            - Randomly select a subset of features (m < total features)
+            - Determine the best split among these features
+              (unless stopping criteria or full node purity is reached)
+        b. Repeat recursively for each child node until:
+            - Maximum depth, minimum samples, or purity criterion is met
+    3. Save the trained tree T_t
+
+Output: Collection of trained trees {Tree_1, Tree_2, ..., Tree_B}
+
+--------------
+# Prediction:
+Input: A new observation, the tree collection from training phase
+
+For classification:
+  - Each tree outputs a predicted class
+  - The most commonly (majority) class is selected as the output
+  
+For regression:
+  - Each tree outputs a numeric prediction
+  - The output is the average of all predictions
+    
+```
+:::
+
+### Out-of-Bag Error Estimation {#sec-theory-oob-error}
+
+Error estimation for bagging is performed by using out-of-bag (OOB) samples as cross validation instead of holding out a fraction (70-80% commonly) of the sample in a model validation set. OOB estimation works by using samples that were not included in the training of the specific tree to be tested and using those as a validation sample to estimate the model error. The probability that an observation is not selected in a bootstrap sample is $1 - (1 - 1/n)^n$ or approximately 37%. Assuming the dataset to be composed of independent and identically distributed samples this provides a robust and unbiased validation set to measure error rate of each tree. Further, Breiman also provides an algorithm using OOB predictions and applying permutation to a single feature in the OOB samples and measure the change in error rate thereby measuring the importance of each feature in the tree [@breiman1984]
+
+### Hyperparameters and Tuning {#sec-theory-hyperparam}
+
+Random Forest models are trained and tuned by modifying several hyperparameters that modify the computational complexity and the variance/bias tradeoff. The maximum depth of each tree, early stopping criteria, and the number of trees to train provide tuning opportunities to increase or decrease computational complexity. The number of trees is an important factor to tune as the higher the number of trees the more stable the model becomes as the variance decreases for each additional tree trained. The maximum tree depth controls the complexity of each tree with a low value providing limited predictive power while higher values can capture complex non-linear relationships but risk overfitting.
+
+To add to the tuning of bias and variance, maximum features per split (m) sets the number of features selected at each node for splits with lower m potentially creating higher variability between individual trees while higher m allows a tree to focus on the most important features. Further bias versus variance tuning can be performed by tuning the maximum number of samples per leaf and per node with the former establishing if further splits are required and the latter setting the need to split further. As with maximum tree depth and maximum features per split tuning these can improve model generalization and reduce tree and model error.
+
+
+## Time Series Analysis {#sec-theory-ts}
+
+### Stationarity and Unit Root Tests {#sec-theory-stationarity}
+
+Augmented Dickey-Fuller (ADF):
+$$\Delta Y_t = \alpha + \beta t + \gamma Y_{t-1} + \sum_{i=1}^{p} \delta_i \Delta Y_{t-i} + \epsilon_t$$
+
+
+### Autocorrelation and Partial Autocorrelation {#sec-theory-acf}
+
+Autocorrelation function (ACF):
+
+$$\rho(k) = \frac{Cov(X_t, X_{t-k})}{\sqrt{Var(X_t)Var(X_{t-k})}} = \frac{\gamma(k)}{\gamma(0)}$$
+
+### ARMA Model Structure {#sec-theory-arma}
+
+General ARMA(p,q) model:
+
+$$Y_t = c + \sum_{i=1}^{p} \phi_i Y_{t-i} + \sum_{j=1}^{q} \theta_j \epsilon_{t-j} + \epsilon_t$$
+where $\phi_i$ are autoregressive coefficients and $\theta_j$ are moving average coefficients
+
+
+### Model Selection Criteria {#sec-theory-criteria}
+
+Note that BIC penalizes model complexity.
+
+AIC and BIC information criteria:
+
+$$AIC = 2k - 2\ln(\hat{L})$$
+
+$$BIC = k\ln(n) - 2\ln(\hat{L})$$
+
+where $k$ is the number of parameters, $n$ is sample size, and $\hat{L}$ is maximum likelihood.
+
+### GARCH for Volatility {#sec-theory-arch}
+
+GARCH:
+
+$$\sigma_t^2 = \alpha_0 + \sum_{i=1}^{p} \alpha_i \epsilon_{t-i}^2$$
+
+### Trend Removal Through Differencing {#sec-theory-differencing}
+
+Higher-order differencing significantly increases model complexity and risks overfitting. After a first differencing ACF and PACF plots are examined and/or ADF test if performed to establish if the data has been made stationary.
+
+First-order differencing:
+
+$$Y_t' = Y_t - Y_{t-1}$$
+
+## Random Forest with Time Series Hybrid Model {#sec-theory-hybrid}
+
+### Feature Engineering Strategy {#sec-theory-strategy}
+
+In feature engineering for this model I will join datasets containing stock market indicators and pricing and supplement with time series features. As Random Forest has no memory (no temporal dependencies) I intend to inject these during feature engineering to produce a hybrid model. The time series aspects I intend to add as features depend on identifying important lag values and adding rolling mean and standard deviation to capture local trends, shocks, and variability.
 
 
 # References {#sec-references}
