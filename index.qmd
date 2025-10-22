@@ -14,6 +14,7 @@ format:
     toc-depth: 3
     number-sections: true
     code-fold: true
+    tbl-scroll: true
 course: Capstone Projects in Data Science
 bibliography: references.bib # file contains bibtex for references
 #always_allow_html: true # this allows to get PDF with HTML features
@@ -242,11 +243,214 @@ First-order differencing:
 
 $$Y_t' = Y_t - Y_{t-1}$$
 
-## Random Forest with Time Series Hybrid Model {#sec-theory-hybrid}
+## Methodology for Random Forest with Time Series Hybrid Model {#sec-theory-hybrid}
 
-### Feature Engineering Strategy {#sec-theory-strategy}
+To determine an optimal model and the significant features within it I will need to bring together multiple datasets to build a model that accurately predicts my target variables of market index direction in 5 and 20 days.
 
-In feature engineering for this model I will join datasets containing stock market indicators and pricing and supplement with time series features. As Random Forest has no memory (no temporal dependencies) I intend to inject these during feature engineering to produce a hybrid model. The time series aspects I intend to add as features depend on identifying important lag values and adding rolling mean and standard deviation to capture local trends, shocks, and variability.
+Steps:
+
+1. **Collect, combine, and cleanse datasets**: Join pricing and indicator data by trading day
+2. **Use time series analysis to diagnose time-based structures**: Run ADF tests, plot ACF/PACF, fit ARCH models with various lags, compare AIC/BIC
+3. **Engineer time series features based on diagnostics**: Create lag variables for significant PACF lags, add rolling windows based on ARCH results
+4. **Add technical indicators**: Include standard indicators (MACD, RSI, Bollinger Bands) used in the literature
+5. **Train Random Forest and Quantum Random Forest on augmented feature set**: Build traditional and quantum circuit models and optimize hyperparameters
+6. **Validate with OOB and cross-validation**: Perform model quality measurement
+7. **Output feature importance**: Outline the greatest contributors to the model and trim features as appropriate
+
+This approach provides the ability to add some memory of past pricing and effects to the Random Forest model based on extracted patterns instead of using default lags common to indicator algorithm default inputs.
+
+# Data and Methods {#sec-methods}
+
+## Data {#sec-data}
+
+### Data Sources {#sec-data-sources}
+
+To ensure transferability of the approaches used in multiple reference papers I am combining two data sources to get comprehensive coverage and generate additional features:
+
+1. **Kaggle "34-year Daily Stock Data"** [@kaggle34year]: Provides S&P 500 pricing as well as macroeconomic indicators (VIX, unemployment, interest rates, and geopolitical risk indices)
+2. **Yahoo Finance ** [@yahoofinance]: Provides OHLC (Open, High, Low, Close) data and volume for the S&P 500
+
+I limit them to an overlapping period January 1990 to February 2024 resulting in a merged dataset of ~9,000 daily observations.
+
+### Dataset Incoming Features {#sec-data-dataset-natural-features}
+
+The combined dataset from Kaggle and Yahoo result in 19 columns representing the pricing, volume, and macroeconomic features fundamental to establishing pricing patterns. Each row contains a date column indicating the stock trading date and the relevant metrics for that date.
+
+| Column Name        | Description                                                                                     | Data Source |
+|---------------------|-------------------------------------------------------------------------------------------------|--------------|
+| dt                  | Date of observation in YYYY-MM-DD format.                                                       | Kaggle       |
+| vix                 | VIX (Volatility Index), a measure of expected market volatility.                               | Kaggle       |
+| sp500               | S&P 500 index value, a benchmark of the U.S. stock market.                                     | Kaggle       |
+| sp500_volume        | Daily trading volume for the S&P 500.                                                          | Kaggle       |
+| djia                | Dow Jones Industrial Average (DJIA), another key U.S. market index.                            | Kaggle       |
+| djia_volume         | Daily trading volume for the DJIA.                                                             | Kaggle       |
+| hsi                 | Hang Seng Index, representing the Hong Kong stock market.                                      | Kaggle       |
+| ads                 | Aruoba-Diebold-Scotti (ADS) Business Conditions Index, reflecting U.S. economic activity.      | Kaggle       |
+| us3m                | U.S. Treasury 3-month bond yield, a short-term interest rate proxy.                            | Kaggle       |
+| joblessness         | U.S. unemployment rate, reported as quartiles (1 represents lowest quartile and so on).        | Kaggle       |
+| epu                 | Economic Policy Uncertainty Index, quantifying policy-related economic uncertainty.             | Kaggle       |
+| GPRD                | Geopolitical Risk Index (Daily), measuring geopolitical risk levels.                           | Kaggle       |
+| prev_day            | Previous day’s S&P 500 closing value, added for lag-based time series analysis.                | Kaggle       |
+| sp500_open          | Opening price (USD).                                                                           | Yahoo       |
+| sp500_high          | High price for the day.                                                                        | Yahoo       |
+| sp500_low           | Low price for the day.                                                                         | Yahoo       |
+| sp500_close         | Closing price for the day.                                                                     | Yahoo       |
+| sp500_adj_close     | Adjusted closing price (accounting for dividends and splits).                                  | Yahoo       |
+| sp500_ohlc_volume   | Day trading volume.                                                                            | Yahoo       |
+
+
+#| Table 1: Market and Volume Indicators
+
+Market statistics show 8597 samples from 2007-01-19 to 2024-02-16 and prices ranging from $295.46 to $5029.73 and S&P500 volume ranging from 14,990,000 to 11,456,230,000 shares traded.
+
+
+| Stat  | Date                | sp500   | sp500_volume | djia     | djia_volume | hsi      | sp500_close | sp500_high | sp500_low | sp500_open | sp500_ohlc_volume |
+|-------|---------------------|---------|---------------|----------|--------------|----------|--------------|-------------|------------|-------------|-------------------|
+| count | 8597               | 8597.00 | 8.60e+03       | 8597.00  | 8597.00      | 8597.00  | 8596.00      | 8596.00     | 8596.00    | 8596.00     | 8.60e+03           |
+| mean  | 2007-01-19 10:42:31 | 1596.65 | 2.46e+09       | 13662.54 | 183.17       | 16763.46 | 1596.11      | 1605.32     | 1585.88    | 1595.90     | 2.46e+09           |
+| min   | 1990-01-03 00:00:00 | 295.46  | 1.50e+07       | 2365.10  | 1.59         | 2736.60  | 295.46       | 301.45      | 294.51     | 295.45      | 0.00               |
+| 50%   | 2007-01-22 00:00:00 | 1270.20 | 2.52e+09       | 10846.29 | 177.83       | 16803.76 | 1270.09      | 1277.49     | 1261.72    | 1270.04     | 2.52e+09           |
+| max   | 2024-02-16 00:00:00 | 5029.73 | 1.15e+10       | 38797.90 | 922.68       | 33154.12 | 5029.73      | 5048.39     | 5016.83    | 5026.83     | 1.15e+10           |
+| std   | NaN                | 1106.24 | 1.85e+09       | 9022.86  | 133.67       | 7350.10  | 1105.71      | 1111.32     | 1099.28    | 1105.44     | 1.85e+09           |
+
+
+
+
+#| Table 2: Macroeconomic Indicators
+
+Macroeconomic indicators show interesting information with 8597 rows matched to the market indicator dataset. The VIX is a volatility index showing how quickly prices are changing and ranges from 9.14 to 82.69 with 82.69 indicating high volatility. Aruoba-Diebold-Scotti (ADS) Business Conditions Index is a measure of US economic activity and implies the current state of the economy. ADS ranges from -26.42 indicating economic shrinkage and likely recession to a maximum in this dataset of 9.48. The data are indexed roughly to zero showing no economic growth or shrinkage. The US 3 month bond yield ranges from 0% yield to maximum of 8.26% and a mean of 2.69%. Joblessness is unemployment measured in quartiles with lowest quartile being 1, highest 4. EPU is the Economic Policy Undertainty index measuring uncertainty related to US economic policy and ranges from 57.20 to 350.46 in this dataset. GPRD is the Geopolotical Risk Index (Daily) measuring geopolitical risk and ranges from 9.49 to 1045.60 in this dataset with a mean of 109.43.
+
+| Stat  | vix   | ads   | us3m  | joblessness | epu    | GPRD   | prev_day |
+|-------|--------|--------|--------|--------------|--------|--------|-----------|
+| count | 8597.00 | 8597.00 | 8597.00 | 8597.00      | 8597.00 | 8597.00 | 8597.00   |
+| mean  | 19.56   | -0.16   | 2.69    | 2.49         | 115.56  | 109.44  | 1596.11   |
+| min   | 9.14    | -26.42  | 0.00    | 1.00         | 57.20   | 9.49    | 295.46    |
+| 50%   | 17.73   | -0.05   | 2.30    | 2.00         | 106.12  | 96.60   | 1270.09   |
+| max   | 82.69   | 9.48    | 8.26    | 4.00         | 350.46  | 1045.60 | 5029.73   |
+| std   | 7.90    | 1.65    | 2.30    | 1.12         | 41.58   | 64.57   | 1105.71   |
+
+
+### Dataset Calculated Indicators {#sec-data-dataset-engineered-indicators}
+
+The dataset columns "dt" indicating the trading date and "sp500_close" were used with the pandas_ta library to generate technical indicator values commonly used in the literature review reference papers and cited as common practice [@murphy1999technical]. The default values were used for all indicator inputs such as moving average type for Middle Bollinger Bands (typically 20-day simple moving average).
+
+| Column Name     | Description                                                                                              | Data Source |
+|------------------|----------------------------------------------------------------------------------------------------------|--------------|
+| 1d_return        | One-day absolute return of the S&P 500.                                                                 | Derived      |
+| macd             | Moving Average Convergence Divergence (EMA12 − EMA26).                                                  | Derived      |
+| macd_signal      | Signal line for MACD, typically a 9-day EMA of MACD.                                                    | Derived      |
+| roc              | Rate of Change indicator showing percentage price change over a set period.                             | Derived      |
+| rsi              | Relative Strength Index, measures recent price strength and momentum.                                   | Derived      |
+| stoch_k          | Stochastic oscillator %K, compares closing price to recent high-low range.                              | Derived      |
+| stoch_d          | Stochastic oscillator %D, a moving average of %K.                                                       | Derived      |
+| adx              | Average Directional Index, measures the strength of a trend.                                            | Derived      |
+| obv              | On-Balance Volume, cumulative measure of volume flow with price movement.                               | Derived      |
+| atr              | Average True Range, measures market volatility based on recent price ranges.                            | Derived      |
+| bb_upper         | Upper Bollinger Band, indicating upper volatility threshold.                                            | Derived      |
+| bb_middle        | Middle Bollinger Band, usually a 20-day simple moving average.                                          | Derived      |
+| bb_lower         | Lower Bollinger Band, indicating lower volatility threshold.                                            | Derived      |
+| ema_12           | 12-day Exponential Moving Average.                                                                     | Derived      |
+| ema_26           | 26-day Exponential Moving Average.                                                                     | Derived      |
+| sma_20           | 20-day Simple Moving Average.                                                                          | Derived      |
+| sma_50           | 50-day Simple Moving Average.                                                                          | Derived      |
+| sma_200          | 200-day Simple Moving Average.                                                                         | Derived      |
+
+
+### Dataset Engineered Time Series Features {#sec-data-dataset-engineered-time-series}
+
+Returns at lag periods identified through time series analysis were added with the AIC and BIC indicating a potentially significant lag of 1. Rolling mean (through 5- and 20-day simple moving averages) and standard deviation were added to capture and smooth periodic trending in the closing prices and supplement the lagged returns with GARCH-aligned volatility metrics
+
+| Column Name     | Description                                                                                              | Data Source |
+|------------------|----------------------------------------------------------------------------------------------------------|--------------|
+| return_lag_1     | One-day lagged return value.                                                                           | Derived      |
+| return_lag_2     | Two-day lagged return value.                                                                           | Derived      |
+| return_lag_3     | Three-day lagged return value.                                                                         | Derived      |
+| roll_std_5       | 5-day rolling standard deviation of returns or prices.                                                 | Derived      |
+| roll_std_20      | 20-day rolling standard deviation of returns or prices.                                                | Derived      |
+
+
+### Dataset Engineered Target Variables {#sec-data-dataset-engineered-targets}
+
+The 1, 5, and 20 day direction of the closing price was used to generate potential target variables for prediction. These direction features were not included as inputs to the model but reserved for individual Random Forest models designed specifically to predict for that future period. The creation of models at each future duration also provided the ability to compare the OOB score for each to determine the most useful model.
+
+| Column Name     | Description                                                                                              | Data Source |
+|------------------|----------------------------------------------------------------------------------------------------------|--------------|
+| direction_1d     | Direction of 1-day return (1 = up, 0 = down).                                                           | Derived      |
+| direction_5d     | Direction of 5-day cumulative return (1 = up, 0 = down).                                                | Derived      |
+| direction_20d    | Direction of 20-day cumulative return (1 = up, 0 = down).                                               | Derived      |
+
+
+![Distribution of Price Direction](images/distro_direction.png){ width=95% }
+
+### Dataset Correlation Matrix {#sec-data-dataset-correlation-matrix}
+
+The clustering of highly correlated features as indicated in the correlation matrix typically show closely related time periods such as previous and next day returns. This is expected as large jumps in a market-wide index is rare. Likewise rolling mean and standard deviations are correlated to price changes over equivalent periods (5 day rolling mean is moderately correlated to the price changes over that period). 
+
+The indicator features roc, rsi, and the stochastics show correlation with lagged values at lags 1, 2, and 11. The high correlation of rolling means to these indicators implies these features may be incorporated into those derivative indicators (roc, rsi, and stochastic d and k). This is further supported by the high correlation among these same features.
+
+Within macroeconomic series the VIX (volatility index) is correlated to rolling mean and standard deviations--large rolling standard deviation implies volatility occurred during that period. The EPU and joblessness are moderately correlated with rolling standard deviations implying those indices are likely significant in market-level pricing.
+
+![Correlation Matrix](images/correlation_matrix.png){ width=95% }
+
+## Feature Engineering Pipeline {#sec-methods-features}
+
+One valuable aspect of Random Forest is that scaling is not required and the algorithm is not sensitive to orders-of-magnitude differences in the input variables. Because time series does require feature scaling all inputs to the Ordinary Least Squarse model produced here to estimate optimal lag must be scaled if they are not within the same range and distribution. In this study we are using only the S&P500 closing price for lag determination so scaling will not be required.
+
+
+### Time Series Diagnostics {#sec-methods-diagnostics}
+
+#### Time series model {sec-methods-diagnostics-ts-model}
+
+Testing for stationarity with the Augmented Dickey-Fuller (ADF) indicates a first differencing of the S&P 500 closing prices to be stationary with ADF of -15.96 at p<0.001. This allows model building with no further differencing. The first determination of optimal lag is to check the ACF and PACF plots using the squared residuals from a basic Ordinary Least Squares (OLS) model.
+
+::: {.callout-note}
+
+ACF/PACF of OLS Model Squared Residuals
+
+```
+
+# fit basic regression (OLS)
+X = sm.add_constant(np.ones(len(y_diff)))
+ols_model = sm.OLS(y_diff.values, X).fit()
+squared_resid = ols_model.resid**2  # need squared residuals for ACF/PACF
+
+# plot acf
+plot_acf(squared_resid, lags=40, ax=plt.gca())
+
+# plot pacf
+plot_pacf(squared_resid, lags=40, ax=plt.gca())
+
+```
+:::
+
+![ACF/PACF](images/acf_pacf.png){ width=80% }
+The PACF shows a strong spike at lag 1 indicating that as potentially significant with smaller spikes at lags 2 and 3. The ACF shows slow decay with a stationary financial time series indicating financial market volatility clustering. This supports the use of rolling mean and standard deviation to smooth but capture volatility patterns.
+
+Using lag of 1 and verifying through AIC and BIC measures with maximum 20-day lag period the optimal lag was at the maximum (20 day) lag indicating the model was low quality and implying that a GARCH model would be the next phase of analysis in further time series model building. This is consistent with the ACF interpretation of volatility clustering.
+
+Despite the poor ARCH(1) model results I generated features for the 1-day absolute and percent return to provide the temporal features to test their viability in the ultimate Random Forest model.
+
+## Model Training and Evaluation {#sec-methods-model}
+
+### Model Evaluation Criteria Selection {#sec-methods-model-eval-choice}
+
+To optimize use of the data and to leverage the strength of Random Forest Out-Of-Bag (OOB) validation I elected to forego the standard 80/20 train/test split and use OOB validation in the model. As noted previously, OOB validation holds out a random subset of the data each round of training and uses this set of data as validation. This provides unseen data while not making this set a fixed series for use by every tree model trained.
+
+### Classic Random Forest Model Training {#sec-methods-classic-model-training}
+
+just explain what the model training is doing and point to pseudocode above
+
+### Hyperparameter Tuning {#sec-methods-model-parameter-tuning}
+
+Explain grid vs random search, what it's doing and why I chose random. Highlight my parameter space info.
+
+### OOB Score and Best Model {#sec-methods-model-parameter-tuning}
+
+put best OOB result
+
+### TODO
+
+Do Quantum RF treatment
 
 
 # References {#sec-references}
