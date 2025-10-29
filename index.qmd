@@ -1,6 +1,6 @@
 ---
-title: "Predicting Stock Market Index Direction Using ARIMA-Augmented Quantum Random Forest Models"
-subtitle: "Integrating Quantum Computing, Machine Learning and Classical Time Series Modeling"
+title: "Predicting Stock Market Index Direction Using ARIMA-Augmented Random Forest Models"
+subtitle: "Integrating Machine Learning and Classical Time Series Modeling"
 author: "Don Krapohl (Advisor: Dr. Shusen Pu)"
 date: today
 format:
@@ -9,15 +9,25 @@ format:
     toc-depth: 3
     number-sections: true
     colorlinks: true
+    include-in-header:
+      text: |
+        \usepackage{etoolbox}
+        \AtBeginEnvironment{longtable}{\small}
   html:
     toc: true
     toc-depth: 3
     number-sections: true
     code-fold: true
     tbl-scroll: true
+    include-in-header:
+      text: |
+        <style>
+        .small-table table {
+          font-size: 0.8em;
+        }
+        </style>
 course: Capstone Projects in Data Science
 bibliography: references.bib # file contains bibtex for references
-#always_allow_html: true # this allows to get PDF with HTML features
 self-contained: true
 execute: 
   warning: false
@@ -26,6 +36,7 @@ editor:
   markdown: 
     wrap: 72
 ---
+
 
 
 # Introduction {#sec-introduction}
@@ -64,7 +75,6 @@ This project will consist of a section covering the background, theory, recent r
 - Generalized AutoRegressive Conditional Heteroskedasticity (GARCH) models of volatility
 - Vector Autoregressive (VAR) models and Multivariate Time Series analysis
 - Hybrid models
-- Quantum Random Forest
 
 I will being with a literature review, provide a theoretical background, outline my methodology and dataset, state dataset statistical information, perform feature engineering, train and measure my models, review the findings, and discuss their implications.
 
@@ -87,10 +97,6 @@ Generalized AutoRegressive Conditional Heteroskedasticity (GARCH) is an extensio
 
 The addition of Vector Autoregression (VAR) models were developed in the early 1980s to capture the reality of financial markets, that they are influenced by many internal and external factors such as interest rates, unemployment, current volatility, current pricing levels, and many others [@sims1980]. These factors have complex and dynamic influence on each other. VAR models are designed to capture current values and relationships as well as past values and their relationships. This is in contrast to the commonly 1- or 2-dimensional SARIMA models capturing linear dynamics over time.
 
-
-## Quantum Random Forest
-
-Within the scope of my Random Forest (RF) study, traditional Random Forest uses standard compute approaches. Cloud services such as Amazon Braket provide quantum compute and compute simulators that add quantum compute paradigms to the RF and other machine learning algorithms. One of the key capabilities in quantum RF (QRF) is the ability to move Gini impurity index calculation into a higher dimensional space, which may make the data more separable [@Srikumar2024QuantumRandomForest]. 
 
 # Theoretical Framework {#sec-theory}
 
@@ -253,7 +259,7 @@ Steps:
 2. **Use time series analysis to diagnose time-based structures**: Run ADF tests, plot ACF/PACF, fit ARCH models with various lags, compare AIC/BIC
 3. **Engineer time series features based on diagnostics**: Create lag variables for significant PACF lags, add rolling windows based on ARCH results
 4. **Add technical indicators**: Include standard indicators (MACD, RSI, Bollinger Bands) used in the literature
-5. **Train Random Forest and Quantum Random Forest on augmented feature set**: Build traditional and quantum circuit models and optimize hyperparameters
+5. **Train Random Forest on augmented feature set**: Build multiple Random Forest models and optimize hyperparameters
 6. **Validate with OOB and cross-validation**: Perform model quality measurement
 7. **Output feature importance**: Outline the greatest contributors to the model and trim features as appropriate
 
@@ -275,6 +281,8 @@ I limit them to an overlapping period January 1990 to February 2024 resulting in
 ### Dataset Incoming Features {#sec-data-dataset-natural-features}
 
 The combined dataset from Kaggle and Yahoo result in 19 columns representing the pricing, volume, and macroeconomic features fundamental to establishing pricing patterns. Each row contains a date column indicating the stock trading date and the relevant metrics for that date.
+
+::: small-table
 
 | Column Name        | Description                                                                                     | Data Source |
 |---------------------|-------------------------------------------------------------------------------------------------|--------------|
@@ -298,12 +306,13 @@ The combined dataset from Kaggle and Yahoo result in 19 columns representing the
 | sp500_adj_close     | Adjusted closing price (accounting for dividends and splits).                                  | Yahoo       |
 | sp500_ohlc_volume   | Day trading volume.                                                                            | Yahoo       |
 
+:::
 
 #| Table 1: Market and Volume Indicators
 
 Market statistics show 8597 samples from 2007-01-19 to 2024-02-16 and prices ranging from $295.46 to $5029.73 and S&P500 volume ranging from 14,990,000 to 11,456,230,000 shares traded.
 
-
+::: {.small-table}
 | Stat  | Date                | sp500   | sp500_volume | djia     | djia_volume | hsi      | sp500_close | sp500_high | sp500_low | sp500_open | sp500_ohlc_volume |
 |-------|---------------------|---------|---------------|----------|--------------|----------|--------------|-------------|------------|-------------|-------------------|
 | count | 8597               | 8597.00 | 8.60e+03       | 8597.00  | 8597.00      | 8597.00  | 8596.00      | 8596.00     | 8596.00    | 8596.00     | 8.60e+03           |
@@ -313,8 +322,7 @@ Market statistics show 8597 samples from 2007-01-19 to 2024-02-16 and prices ran
 | max   | 2024-02-16 00:00:00 | 5029.73 | 1.15e+10       | 38797.90 | 922.68       | 33154.12 | 5029.73      | 5048.39     | 5016.83    | 5026.83     | 1.15e+10           |
 | std   | NaN                | 1106.24 | 1.85e+09       | 9022.86  | 133.67       | 7350.10  | 1105.71      | 1111.32     | 1099.28    | 1105.44     | 1.85e+09           |
 
-
-
+:::
 
 #| Table 2: Macroeconomic Indicators
 
@@ -334,53 +342,32 @@ Macroeconomic indicators show interesting information with 8597 rows matched to 
 
 The dataset columns "dt" indicating the trading date and "sp500_close" were used with the pandas_ta library to generate technical indicator values commonly used in the literature review reference papers and cited as common practice [@murphy1999technical]. The default values were used for all indicator inputs such as moving average type for Middle Bollinger Bands (typically 20-day simple moving average).
 
-| Column Name     | Description                                                                                              | Data Source |
-|------------------|----------------------------------------------------------------------------------------------------------|--------------|
-| 1d_return        | One-day absolute return of the S&P 500.                                                                 | Derived      |
-| macd             | Moving Average Convergence Divergence (EMA12 − EMA26).                                                  | Derived      |
-| macd_signal      | Signal line for MACD, typically a 9-day EMA of MACD.                                                    | Derived      |
-| roc              | Rate of Change indicator showing percentage price change over a set period.                             | Derived      |
-| rsi              | Relative Strength Index, measures recent price strength and momentum.                                   | Derived      |
-| stoch_k          | Stochastic oscillator %K, compares closing price to recent high-low range.                              | Derived      |
-| stoch_d          | Stochastic oscillator %D, a moving average of %K.                                                       | Derived      |
-| adx              | Average Directional Index, measures the strength of a trend.                                            | Derived      |
-| obv              | On-Balance Volume, cumulative measure of volume flow with price movement.                               | Derived      |
-| atr              | Average True Range, measures market volatility based on recent price ranges.                            | Derived      |
-| bb_upper         | Upper Bollinger Band, indicating upper volatility threshold.                                            | Derived      |
-| bb_middle        | Middle Bollinger Band, usually a 20-day simple moving average.                                          | Derived      |
-| bb_lower         | Lower Bollinger Band, indicating lower volatility threshold.                                            | Derived      |
-| ema_12           | 12-day Exponential Moving Average.                                                                     | Derived      |
-| ema_26           | 26-day Exponential Moving Average.                                                                     | Derived      |
-| sma_20           | 20-day Simple Moving Average.                                                                          | Derived      |
-| sma_50           | 50-day Simple Moving Average.                                                                          | Derived      |
-| sma_200          | 200-day Simple Moving Average.                                                                         | Derived      |
+::: small-table
+
+| Column Name     | Description                                                                    | Data Source |
+|------------------|--------------------------------------------------------------------------------|--------------|
+| 1d_return        | One-day absolute return of the S&P 500.                                       | Derived      |
+| macd             | Moving Average Convergence Divergence (EMA12 − EMA26).                        | Derived      |
+| macd_signal      | Signal line for MACD, typically a 9-day EMA of MACD.                          | Derived      |
+| roc              | Rate of Change indicator showing percentage price change over a set period.   | Derived      |
+| rsi              | Relative Strength Index, measures recent price strength and momentum.         | Derived      |
+| stoch_k          | Stochastic oscillator %K, compares closing price to recent high-low range.    | Derived      |
+| stoch_d          | Stochastic oscillator %D, a moving average of %K.                             | Derived      |
+| adx              | Average Directional Index, measures the strength of a trend.                  | Derived      |
+| obv              | On-Balance Volume, cumulative measure of volume flow with price movement.     | Derived      |
+| atr              | Average True Range, measures market volatility based on recent price ranges.  | Derived      |
+| bb_upper         | Upper Bollinger Band, indicating upper volatility threshold.                  | Derived      |
+| bb_middle        | Middle Bollinger Band, usually a 20-day simple moving average.                | Derived      |
+| bb_lower         | Lower Bollinger Band, indicating lower volatility threshold.                  | Derived      |
+| ema_12           | 12-day Exponential Moving Average.                                           | Derived      |
+| ema_26           | 26-day Exponential Moving Average.                                           | Derived      |
+| sma_20           | 20-day Simple Moving Average.                                                | Derived      |
+| sma_50           | 50-day Simple Moving Average.                                                | Derived      |
+| sma_200          | 200-day Simple Moving Average.                                               | Derived      |
+
+:::
 
 
-### Dataset Engineered Time Series Features {#sec-data-dataset-engineered-time-series}
-
-Returns at lag periods identified through time series analysis were added with the AIC and BIC indicating a potentially significant lag of 1. Rolling mean (through 5- and 20-day simple moving averages) and standard deviation were added to capture and smooth periodic trending in the closing prices and supplement the lagged returns with GARCH-aligned volatility metrics
-
-| Column Name     | Description                                                                                              | Data Source |
-|------------------|----------------------------------------------------------------------------------------------------------|--------------|
-| return_lag_1     | One-day lagged return value.                                                                           | Derived      |
-| return_lag_2     | Two-day lagged return value.                                                                           | Derived      |
-| return_lag_3     | Three-day lagged return value.                                                                         | Derived      |
-| roll_std_5       | 5-day rolling standard deviation of returns or prices.                                                 | Derived      |
-| roll_std_20      | 20-day rolling standard deviation of returns or prices.                                                | Derived      |
-
-
-### Dataset Engineered Target Variables {#sec-data-dataset-engineered-targets}
-
-The 1, 5, and 20 day direction of the closing price was used to generate potential target variables for prediction. These direction features were not included as inputs to the model but reserved for individual Random Forest models designed specifically to predict for that future period. The creation of models at each future duration also provided the ability to compare the OOB score for each to determine the most useful model.
-
-| Column Name     | Description                                                                                              | Data Source |
-|------------------|----------------------------------------------------------------------------------------------------------|--------------|
-| direction_1d     | Direction of 1-day return (1 = up, 0 = down).                                                           | Derived      |
-| direction_5d     | Direction of 5-day cumulative return (1 = up, 0 = down).                                                | Derived      |
-| direction_20d    | Direction of 20-day cumulative return (1 = up, 0 = down).                                               | Derived      |
-
-
-![Distribution of Price Direction](images/distro_direction.png){ width=95% }
 
 ### Dataset Correlation Matrix {#sec-data-dataset-correlation-matrix}
 
@@ -392,12 +379,21 @@ Within macroeconomic series the VIX (volatility index) is correlated to rolling 
 
 ![Correlation Matrix](images/correlation_matrix.png){ width=95% }
 
-## Feature Engineering Pipeline {#sec-methods-features}
+### Missing Data Check and Correct {#sec-methods-missing}
+
+The dataset after supplementary features were added for rolling averages and technical indicators had rows at the beginning of the dataset with empty values. This is because calculating a 20-day rolling average will not have a value until the 20th day from the beginning of the dataset as it requires 19 prior days to calculate the average with that day.  Likewise the 5-day rolling average would not appear until day 5. In all the added features 54 rows contained one or more empty columns. For the purposes of this study the beginning dates in the financial time series were unimportant so no imputation was done, the 54 rows were dropped.
+
+### Class Imbalance Check and Correct {#sec-methods-imbalance}
+
+The incoming data contained 8797 samples. The feature created for each row containing the 5-day future up/down signal had 4921 rows indicating the price would be up in 5 days, 3622 indicating the price would be down. After using Synthetic Minority Oversampling Technique (SMOTE) to balance the classes resulting in 4921 rows for each class.
+
+In SMOTE a random sample in the minority class is selected along with a set of its nearest neighbors of the same class. A new minority class sample is generated from a random point between the selected sample and one or more of the neighbors. This repeats until the number of samples in the minority class matches that of the majority class.
+
+## Feature Engineering {#sec-methods-features}
 
 One valuable aspect of Random Forest is that scaling is not required and the algorithm is not sensitive to orders-of-magnitude differences in the input variables. Because time series does require feature scaling all inputs to the Ordinary Least Squarse model produced here to estimate optimal lag must be scaled if they are not within the same range and distribution. In this study we are using only the S&P500 closing price for lag determination so scaling will not be required.
 
-
-### Time Series Diagnostics {#sec-methods-diagnostics}
+### Time Series {#sec-methods-time-series}
 
 #### Time series model {sec-methods-diagnostics-ts-model}
 
@@ -424,11 +420,101 @@ plot_pacf(squared_resid, lags=40, ax=plt.gca())
 :::
 
 ![ACF/PACF](images/acf_pacf.png){ width=80% }
+
 The PACF shows a strong spike at lag 1 indicating that as potentially significant with smaller spikes at lags 2 and 3. The ACF shows slow decay with a stationary financial time series indicating financial market volatility clustering. This supports the use of rolling mean and standard deviation to smooth but capture volatility patterns.
+
+
+#### Time Series Diagnostics and Results {sec-methods-diagnostics-ts-diagnostics-results}
 
 Using lag of 1 and verifying through AIC and BIC measures with maximum 20-day lag period the optimal lag was at the maximum (20 day) lag indicating the model was low quality and implying that a GARCH model would be the next phase of analysis in further time series model building. This is consistent with the ACF interpretation of volatility clustering.
 
 Despite the poor ARCH(1) model results I generated features for the 1-day absolute and percent return to provide the temporal features to test their viability in the ultimate Random Forest model.
+
+
+### Dataset Engineered Time Series Features {#sec-data-dataset-engineered-time-series}
+
+Returns at lag periods identified through time series analysis were added with the AIC and BIC indicating a potentially significant lag of 1. Rolling mean (through 5- and 20-day simple moving averages) and standard deviation were added to capture and smooth periodic trending in the closing prices and supplement the lagged returns with GARCH-aligned volatility metrics
+
+| Column Name     | Description                                                                  | Data Source |
+|------------------|--------------------------------------------------------------------------------|--------------|
+| return_lag_1     | One-day lagged return value.                                                 | Derived      |
+| return_lag_2     | Two-day lagged return value.                                                 | Derived      |
+| return_lag_3     | Three-day lagged return value.                                               | Derived      |
+| roll_std_5       | 5-day rolling standard deviation of returns or prices.                       | Derived      |
+| roll_std_20      | 20-day rolling standard deviation of returns or prices.                      | Derived      |
+
+### Dataset Engineered Target Variables {#sec-data-dataset-engineered-targets
+
+The 1, 5, and 20 day direction of the closing price was used to generate potential target variables for prediction. These direction features were not included as inputs to the model but reserved for individual Random Forest models designed specifically to predict for that future period. The creation of models at each future duration also provided the ability to compare the OOB score for each to determine the most useful model.
+
+| Column Name     | Description                                                                  | Data Source |
+|------------------|------------------------------------------------------------------------------|--------------|
+| direction_1d     | Direction of 1-day return (1 = up, 0 = down).                               | Derived      |
+| direction_5d     | Direction of 5-day cumulative return (1 = up, 0 = down).                    | Derived      |
+| direction_20d    | Direction of 20-day cumulative return (1 = up, 0 = down).                   | Derived      |
+
+![Distribution of Price Direction](images/distro_direction.png){ width=95% }
+
+
+## Feature Reduction {#sec-methods-feature-analysis}
+
+### Dimensionality Reduction {#sec-methods-feature-dim-reduct}
+
+This dataset began with ~60 features across multiple data sources. Many of the features are either correlated or derived from related algorithms. To reduce the features space we can study how features vary together, which features contribute generally to the variance of the dataset, and which specifically provide the most variance to a general random forest model. After the features are selected we may then proceed with training a final model.
+
+#### Multicollinearity {#sec-methods-feature-dim-reduct-vif}
+
+The measure of of how features are correlated in a regression model is measured using the Variance Inflation Factor (VIF). I use it here to provide insight into columns which may be removed as the information they contain are embedded in other predictor variables. For each factor $X_i$ we measure the coefficient of determination ($R^2$) against the selected feature using the VIF formula:
+
+$$
+\text{VIF}_i = \frac{1}{1 - R_i^2}
+$$
+
+If there is no multicollinearity for the factor VIF=1. The more factors or the larger the $R^2$ with other factors the larger the VIF. By convention a moderate correlation of 5 is borderline acceptable and 10 indicates high multicollinearity. For my analysis I removed all factors with VIF>10.
+
+#### Principal Component Analysis {#sec-methods-feature-dim-reduct-pca}
+
+In addition to removal of columns using VIF I further reduced columns using Principal Component Analysis (PCA). The purpose of PCA is to reduce the dimensionality of a dataset by capturing the maximum variance available in a dataset. The steps to perform PCA are to standardize the data to make the mean zero, calculate a covariance matrix, find the eigenvalues and eigenvectors of the data, sort the discovered eigenvalues and eigenvectors, and calculate the principal components. Steps:
+
+1. Scale data by standard scaling
+$$
+Z_j = \frac{X_j - \bar{X}_j}{s_j}
+$$
+where $\bar{X}_j$ is the mean and $s_j$ is the standard deviation of variable $X_j$.
+
+2. Perform Singular Value Decomposition  
+
+As an alternative to the calculation of eigenvalues and eigenvectors we can use  Singular Value Decomposition (SVD) to derive the principal components. SVD 
+
+::: {.callout-note}
+
+SVD in Python
+
+```
+U, S, Vt = np.linalg.svd(X_centered, full_matrices=False)
+
+# for each sample
+explained_variance = S**2 / (X_centered.shape[0] - 1  # sample variance divided by number of samples minus 1
+explained_variance_ratio = explained_variance/np.sum(explained_variance)  # explained variance ratio
+
+```
+
+:::
+
+
+3. Determine Variance Contribution for Each Component
+
+Using the Explained Variance Ratio (EVR) formula we divide each eigenvalue by the sum of all eigenvalues to determine how much each factor contributes to the variance. Sorted descending we are then able to select the most significant factors that have the highest explanatory value in the data. The EVR formula:
+
+
+$$
+\text{EVR}_i = \frac{\lambda_i}{\sum_{j=1}^{p} \lambda_j}
+$$
+
+where:
+$\lambda_i$ is the eigenvalue for the $i^{th}$ principal component  
+$p$ is the total number of components
+
 
 ## Model Training and Evaluation {#sec-methods-model}
 
@@ -444,13 +530,17 @@ just explain what the model training is doing and point to pseudocode above
 
 Explain grid vs random search, what it's doing and why I chose random. Highlight my parameter space info.
 
-### OOB Score and Best Model {#sec-methods-model-parameter-tuning}
+### OOB Score and Best Model {#sec-methods-model-quality-oob}
 
 put best OOB result
 
-### TODO
+## Model quality {#sec-methods-model-quality}
 
-Do Quantum RF treatment
+### ROC AUC {#sec-methods-model-quality-rocauc}
+
+### Confusion Matrix {#sec-methods-model-quality-confusion}
+
+# Interpretation and Conclusion {#sec-conclusion}
 
 
 # References {#sec-references}
