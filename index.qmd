@@ -532,13 +532,65 @@ Explain grid vs random search, what it's doing and why I chose random. Highlight
 
 ### OOB Score and Best Model {#sec-methods-model-quality-oob}
 
-put best OOB result
+The best model based on out-of-bag score was a model using 100 estimators, maximum tree depth of 18 levels, minimum samples per leaf of 3, minimum samples per split of 4, and $log^2$ max features.
 
 ## Model quality {#sec-methods-model-quality}
 
+### Model Quality Metrics {#sec-methods-model-quality-metrics}
+
+To measure the quality of the model we will determine how the predictions are able to correctly characterize future market direction we will measure precision, recall, and F1 score. Generally the higher each of these scores the better the model.
+
+Precision is the measure of the number of correctly predicted positive cases. Precision is calculated:
+
+$$
+\text{Precision} = \frac{TP}{TP + FP}
+$$
+
+Where TP is the true positive rate and FP is the false positive rate. In the selected random forest model the precision is 74.7% representing a model with reasonable ability to correctly identify market "up" class at a rate better than chance.
+
+Recall (sensitivity, true positive rate) is the measure of how many actual positives are accurately identified. It is calculated:
+
+$$
+\text{Recall} = \frac{TP}{TP + FN}
+$$
+
+Where TP is the true positive rate and FN is the false negative rate. The recall for the selected random forest model is 71.6% which also represents the model to be ability of the model to discover true positives.
+
+A measure of the balanced view of precision and recall is F1 score. It is the harmonic mean of precision and recall and is calculated as:
+
+$$
+F1 = 2 \times \frac{\text{Precision} \times \text{Recall}}{\text{Precision} + \text{Recall}}
+$$
+
+The F1 score for the random forest model is 73.1% indicating a well-balanced model that has a fairly high discernment capability between the up and down classes in the dataset.
+
 ### ROC AUC {#sec-methods-model-quality-rocauc}
 
+The Receiver Operating Characteristics curve captures the balance of the true and false positive rates and provides a visual demonstration of the model predictive power vs random chance. The 45 degree diagonal line represents predictions made randomly over a dataset and represents 50% odds of correctly guessing the sample class. The curved line represents the tradeoff between sensitivity (recall rate or the number of true positives correctly identified) and specificity (the number of true negatives correctly identified). A perfect ROC curve touches the top left corner and indicates a problematic model that is likely overfitting or has a data problem. A ROC curve that matches the diagonal line represents a model that is no better than randomly guessing the class label.
+
+![ROC Curve](images/roc_curve.png){ width=50% }
+This ROC curve demonstrates a reasonably good balance of sensitivity and specificity and is in line with similar curves in the litarature.
+
+The area under the ROC curve, commonly called AUC, is the measure of the model to discriminate between classes and serves as a better measure of model quality than accuracy as it measure quality across all classes and thresholds. A generalized form of AUC is the "trapezoidal rule" for using ROC to establish AUC.
+
+$$
+\text{AUC} = \sum_{i=1}^{n-1} (FPR_{i+1} - FPR_i) \frac{TPR_{i+1} + TPR_i}{2}
+$$
+Where true positive rate is as above and false positive rate is:
+
+$$
+\text{FPR} = \frac{FP}{FP + TN}
+$$
+The AUC for this random forest model is 0.819 or 81.9% indicating a fairly high probability of being to discern between classes.
+
 ### Confusion Matrix {#sec-methods-model-quality-confusion}
+
+The confusion matrix provides the ability to characterize in which direction a model is most/least able to discern or if it is easily confused between classes.
+
+![Confusion Matrix](images/confusion_matrix.png){ width=50% }
+
+The confusion matrix for this model indicates that there are 3521 true negatives (TN) where the class label was correctly predicted to be "price moves down". There are 1400 false positives (FP) where the model predicted the future price to be up but it was actually down. There are 1192 false negatives (FN) where the model predicted the market would be down but it is actually up. Finally there are 3729 instances where the model correctly predicted the future market price at 5 days in the future would be up.
+
 
 # Interpretation and Conclusion {#sec-conclusion}
 
