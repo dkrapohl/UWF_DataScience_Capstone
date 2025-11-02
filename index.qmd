@@ -524,15 +524,20 @@ To optimize use of the data and to leverage the strength of Random Forest Out-Of
 
 ### Classic Random Forest Model Training {#sec-methods-classic-model-training}
 
-just explain what the model training is doing and point to pseudocode above
+Pseudocode for random forest model training is above. The process, assuming 100 trees (n_estimators=100), begins with drawing roughly 67% of the samples randomly as training examples. The remaining 33% is used for testing. The samples are random and all rows in dataset are candidates for each tree built. This generates 100 trees from slighly different sets of data. Each tree is built by choosing a subset of features from all features. In my optimal model the number of features at each node split is $log_2 (p)$. My final dataset after PCA is composed of 8 features so each node will select $log_2 (8) = 3$ of these features. This ensures variety in the choices to be made at any node in the model. The algorithm tests multiple thresholds for each of the features and measures the information gained by each set of values. In my model I used Gini Impurity. The data are divided into two groups matching the best split threshold for each feature. Each subgroup becomes a node and the same process continues until a stopping criteria is hit. These can include the maximum tree depth, fewer than the set minimum samples per split, each leaf node has fewer than minimum samples per leaf, or all samples in the node are from the same class.
+
+
+### Random Forest Model Prediction {#sec-methods-classic-model-prediction}
+
+The algorithm harnesses the "wisdom of crowds" phenomenon in which the opinion of a single individual may be low quality but the combination of a group of individuals can be of higher quality than the individuals. Here as well, a single tree at decision time accepts the input features and provides a class prediction. The remaining trees do likewise and the final prediction is the class predicted most frequently with the probability of that class being correct the probability of the output class being selected across all trees.
 
 ### Hyperparameter Tuning {#sec-methods-model-parameter-tuning}
 
-Explain grid vs random search, what it's doing and why I chose random. Highlight my parameter space info.
+Two try to discover globally optimal sets of hyperparameters I used a random search algorithm. I selected random search over grid search as grid search performs an exhaustive search over a range of values set in a search space that is sensitive to the search space values and computationally intensive. In contract random search selects values randomly within the range of the hyperparameter values set in the search space making it more computationally efficient to explore a larger range of hyperparameter values.
 
 ### OOB Score and Best Model {#sec-methods-model-quality-oob}
 
-The best model based on out-of-bag score was a model using 100 estimators, maximum tree depth of 18 levels, minimum samples per leaf of 3, minimum samples per split of 4, and $log^2$ max features.
+The best model based on out-of-bag score was a model using 100 estimators, maximum tree depth of 18 levels, minimum samples per leaf of 3, minimum samples per split of 4, and $log^2$ max features. 
 
 ## Model quality {#sec-methods-model-quality}
 
@@ -554,7 +559,7 @@ $$
 \text{Recall} = \frac{TP}{TP + FN}
 $$
 
-Where TP is the true positive rate and FN is the false negative rate. The recall for the selected random forest model is 71.6% which also represents the model to be ability of the model to discover true positives.
+Where TP is the true positive rate and FN is the false negative rate. The recall for my selected random forest model is 71.6% which also represents the model to be ability of the model to discover true positives.
 
 A measure of the balanced view of precision and recall is F1 score. It is the harmonic mean of precision and recall and is calculated as:
 
@@ -562,7 +567,7 @@ $$
 F1 = 2 \times \frac{\text{Precision} \times \text{Recall}}{\text{Precision} + \text{Recall}}
 $$
 
-The F1 score for the random forest model is 73.1% indicating a well-balanced model that has a fairly high discernment capability between the up and down classes in the dataset.
+The F1 score for the highest OOB-scoring random forest model is 73.1% indicating a well-balanced model that has a fairly high discernment capability between the up and down classes in the dataset.
 
 ### ROC AUC {#sec-methods-model-quality-rocauc}
 
@@ -593,6 +598,14 @@ The confusion matrix for this model indicates that there are 3521 true negatives
 
 
 # Interpretation and Conclusion {#sec-conclusion}
+
+I initially trained multiple test random forest models to establish baseline model quality for predicting the S&P 500 5-day future price direction (up/down). Those models achieved just over chance at 51-53% OOB score. Adding rolling and lag features discovered through time series analysis did not markedly improve the model and these were eliminated during feature pruning with PCA and manual feature removal based on multicollinearity studies. The final model trained over the pruned set of features achieved 73.1% OOB score indicating the model had improved. This model also yielded a 73.1 F1 score and AUC of 81.9 indicating the model is reasonably high quality.
+
+The model determined the most important features of the dataset to be the Aruoba-Diebold-Scotti (ADS) Business Conditions Index reflecting U.S. economic activity, the momentum indicator "Rate of Change" (ROC), Relative Strength Index (RSI) capturing the speed and momentum of recent price changes, Average Direction Index (ADX) capturing up/down trend, the volume of the Dow Jones Index component stocks (DJIA Volume), the daily Economic Policy Uncertainty Index (EPU), the VIX volatility indicator, and Hang Seng Index (HSI) representing the Hong Kong stock market levels. Within these we have macroeconomic measures (EPU, ADS), comparative price movements with other indexes (HSI and DJIA volume), measures of trend and trend strength (ROC, ADX), and volatility (VIX).
+
+I expect that the rolling period and lead/lag features generated were not important to the model because they were likely captured in these other measures. This is implied by PCA not removing them and the model indicating high value to these while muticollinearity study showed some of these to be moderately or highly correlated to other features.
+
+The final model is usable for predicting the 5-day direction of the S&P 500 stock market index. Manual backtesting was done using a long-only approach wherein a purchase is made when the prediction first says the 5-day price will be up and sell when the prediction first says the price will drop. Not accounting for cost of the trade this model resulted in returns significantly greater than a simple buy-and-hold and could potentially provide one source for the high-risk allocation of an investment portfolio.
 
 
 # References {#sec-references}
